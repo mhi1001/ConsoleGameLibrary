@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ConsoleGameLibrary.Classes.TraceLogger;
 
 namespace ConsoleGameLibrary
 {
@@ -57,13 +56,17 @@ namespace ConsoleGameLibrary
         /// <param name="enemy">The creature that will be getting hit</param>
         public void Hit(Creature enemy)
         {
+            Trace.ts.TraceInformation("Attacking.....");
             int rawDamage = AttackSlots.Where(w => w.IsEquipped).Sum(w => w.Damage);
             enemy.ReceiveHit(rawDamage);
         }
 
         public void Loot(WorldObject item)
         {
-            if(item is AttackItem) AttackSlots.Add();
+            Trace.ts.TraceInformation("Looting....");
+            if (item is AttackItem) AttackSlots.Add(item as AttackItem);
+            if(item is DefenseItem) DefenseSlots.Add(item as DefenseItem);
+            throw new Exception("Looted invalid type");
         }
 
         /// <summary>
@@ -72,6 +75,7 @@ namespace ConsoleGameLibrary
         /// <param name="damageTaken">The ammount of raw damage taken from a hit</param>
         public void ReceiveHit(int damageTaken)
         {
+            Trace.ts.TraceInformation("Taking damage......");
             int dmgDefense = DefenseSlots.Sum(d => d.DamageDefense);
             if (dmgDefense > damageTaken) damageTaken = 0;
             HitPoints -= (damageTaken - dmgDefense);

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleGameLibrary
+﻿namespace ConsoleGameLibrary
 {
-    public class AttackItem : WorldObject
+    public abstract class AttackItem : WorldObject, IWeapon
     {
-        public int Damage { get; set; }
-        public int Range { get; set; }
-        public bool IsEquipped { get; set; }
+        public abstract int Damage { get; }
+        public abstract int Range { get; }
+        public bool IsEquipped { get; set;  }
     }
 }

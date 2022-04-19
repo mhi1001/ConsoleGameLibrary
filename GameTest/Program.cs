@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GameTest
+﻿namespace GameTest
 {
     class Program
     {
