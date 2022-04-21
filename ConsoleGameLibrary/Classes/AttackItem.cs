@@ -1,4 +1,6 @@
-﻿namespace ConsoleGameLibrary
+﻿using ConsoleGameLibrary.CompositeDesignInventory;
+
+namespace ConsoleGameLibrary
 {
     public abstract class AttackItem : WorldObject, IWeapon
     {

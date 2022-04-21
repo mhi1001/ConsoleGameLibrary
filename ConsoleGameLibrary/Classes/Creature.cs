@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using ConsoleGameLibrary.Classes.CompositeDesignInventory;
 using ConsoleGameLibrary.Classes.TraceLogger;
+using ConsoleGameLibrary.Classes.Weapons;
 
 namespace ConsoleGameLibrary
 {
     /// <summary>
     /// Creature class is the base class for all the enemies/allies/players in the game.
     /// </summary>
-    public class Creature
+    public class Creature : ICreature
     {
         public int X { get; set; }
         public int Y { get; set; }
@@ -16,6 +19,9 @@ namespace ConsoleGameLibrary
         public string Name { get; set; }
         public List<AttackItem> AttackSlots { get; set; }
         public List<DefenseItem> DefenseSlots { get; set; }
+        public MiscInventory MiscInventory { get; set; }
+        public string Marker { get; set; }
+
 
 
         /// <summary>
@@ -26,7 +32,7 @@ namespace ConsoleGameLibrary
         /// <param name="x">X coordinate so you know where is located in the matrix</param>
         /// <param name="y">Y coordinate so you know where is located in the matrix</param>
         /// <param name="inventoryMaxSpace"> Integer that determines max amount of defense items and attack items you can carry</param>
-        public Creature(string name, int maxHitPoints, int x, int y, int inventoryMaxSpace)
+        public Creature(string name, int maxHitPoints, int x, int y, int inventoryMaxSpace, string marker)
         {
             Name = name;
             HitPoints = maxHitPoints;
@@ -36,37 +42,47 @@ namespace ConsoleGameLibrary
             //Initializes the Inventory and sets a limit of items
             AttackSlots = new List<AttackItem>(inventoryMaxSpace);
             DefenseSlots = new List<DefenseItem>(inventoryMaxSpace);
+            MiscInventory = new MiscInventory();
+            Marker = marker;
+
         }
 
-        public bool IsDead
-        {
-            get
-            {
-                if (HitPoints <= 0)
-                {
-                    HitPoints = 0;
-                    return true;
-                }
-                return false;
-            }
-        }
+
+        public bool IsDead { get; set; }
+
         /// <summary>
         /// Method that goes through your Attack weapons list, sums the damage of equipped weapons.
         /// </summary>
         /// <param name="enemy">The creature that will be getting hit</param>
-        public void Hit(Creature enemy)
-        {
-            Trace.ts.TraceInformation("Attacking.....");
-            int rawDamage = AttackSlots.Where(w => w.IsEquipped).Sum(w => w.Damage);
-            enemy.ReceiveHit(rawDamage);
-        }
+        /// Commented for the strategy pattern attack
+        //public void Hit(Creature enemy)
+        //{
+        //    Trace.ts.TraceInformation("Attacking.....");
+        //    int rawDamage = AttackSlots.Where(w => w.IsEquipped).Sum(w => w.Damage);
+        //    enemy.ReceiveHit(rawDamage);
+        //}
 
         public void Loot(WorldObject item)
         {
             Trace.ts.TraceInformation("Looting....");
-            if (item is AttackItem) AttackSlots.Add(item as AttackItem);
-            if(item is DefenseItem) DefenseSlots.Add(item as DefenseItem);
-            throw new Exception("Looted invalid type");
+
+            if (item is AttackItem && item.Lootable)
+            {
+                AttackSlots.Add(item as AttackItem);
+            }
+            else if (item is DefenseItem && item.Lootable)
+            {
+                DefenseSlots.Add(item as DefenseItem);
+            }
+            else if (item.Lootable)
+            {
+                MiscInventory.AddItem(item);
+            }
+            else
+            {
+                throw new Exception("Looted invalid type/Looted a non-lootable object");
+            }
+            Trace.ts.Flush();
         }
 
         /// <summary>
@@ -79,6 +95,23 @@ namespace ConsoleGameLibrary
             int dmgDefense = DefenseSlots.Sum(d => d.DamageDefense);
             if (dmgDefense > damageTaken) damageTaken = 0;
             HitPoints -= (damageTaken - dmgDefense);
+            if (HitPoints <= 0)
+            {
+                IsDead = true;
+                HitPoints = 0;
+            }
+            else
+            {
+                IsDead = false;
+            }
+        }
+
+        public void Draw()
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.SetCursorPosition(X, Y);
+            Console.Write(Marker);
+            Console.ResetColor();
         }
 
     }

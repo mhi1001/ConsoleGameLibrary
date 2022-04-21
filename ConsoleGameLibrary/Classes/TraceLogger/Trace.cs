@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace ConsoleGameLibrary.Classes.TraceLogger
 {
+    /// <summary>
+    /// Class used to log specified events to a textfile
+    /// </summary>
     public static class Trace
     {
         public static TraceSource ts;
@@ -18,9 +21,10 @@ namespace ConsoleGameLibrary.Classes.TraceLogger
 
             // setting the overall switch
             ts.Switch = new SourceSwitch("Log", "All");
-
+            
             TraceListener fileLog = new TextWriterTraceListener(new StreamWriter("LogFile.txt"));
             ts.Listeners.Add(fileLog);
+            ts.Flush();
 
         }
     }
