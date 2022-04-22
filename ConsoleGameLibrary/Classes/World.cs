@@ -19,18 +19,34 @@ namespace ConsoleGameLibrary
             Cols = Grid.GetLength(1);
         }
 
+        //public void Draw()
+        //{
+        //    for (int y = 0; y < Rows; y++)
+        //    {
+        //        for (int x = 0; x < Cols; x++)
+        //        {
+        //            string element = Grid[y, x];
+        //            Console.SetCursorPosition(x, y);
+        //            Console.Write(element);
+        //        }
+        //    }
+        //}
         public void Draw()
         {
+            string map = "";
             for (int y = 0; y < Rows; y++)
             {
                 for (int x = 0; x < Cols; x++)
                 {
-                    string element = Grid[y, x];
-                    Console.SetCursorPosition(x, y);
-                    Console.Write(element);
+                    map += Grid[y, x];
+                    //Console.SetCursorPosition(x, y);
+                    //Console.Write(element);
                 }
+                map += "\n";
             }
+            Console.WriteLine(map);
         }
+
 
         public bool IsWalkable(int x, int y)
         {

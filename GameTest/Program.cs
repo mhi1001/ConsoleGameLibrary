@@ -91,6 +91,7 @@ namespace GameTest
         private World _myWorld;
         private World _mySecondWorld;
         private ICreature player;
+        private ICreature enemy;
         string[,] grid2 =
             LevelParser.ParseFileTo2DArray(@"C:\Users\pc\source\repos\ConsoleGameLibrary\ConsoleGameLibrary\GUI\level2.txt");
         public void Start()
@@ -100,14 +101,15 @@ namespace GameTest
             
             _myWorld = new World(grid);
             player = new Creature("player", 100, 2,2, 5, "P");
+            enemy = new Creature("enemy", 100, 5, 5, 5, "E");
             _mySecondWorld = new World(grid2);
-
+            Console.CursorVisible = false;
             GameLoop();
         }
 
         private void GameLoop()
         {
-
+            Task.Run(EnemyMovement);
             while (true)
             {
                 Frame();
@@ -118,11 +120,11 @@ namespace GameTest
 
         public void Frame()
         {
+            Console.SetCursorPosition(0, 0);
             _myWorld.Draw();
-           // _mySecondWorld.Draw();
             player.Draw();
+            enemy.Draw();
         }
-
         private void HandleInput()
         {
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
@@ -136,7 +138,10 @@ namespace GameTest
                         player.Y -= 1;
                         if (_myWorld.IsEnd(player.X, player.Y))
                         {
+                            enemy.Y = 2;
+                            enemy.X = 2;
                             _myWorld = new World(grid2);
+                           
                         }
 
                     }
@@ -149,6 +154,8 @@ namespace GameTest
                         player.X -= 1;
                         if (_myWorld.IsEnd(player.X, player.Y))
                         {
+                            enemy.Y = 2;
+                            enemy.X = 2;
                             _myWorld = new World(grid2);
                         }
 
@@ -162,6 +169,8 @@ namespace GameTest
                         player.Y += 1;
                         if (_myWorld.IsEnd(player.X, player.Y))
                         {
+                            enemy.Y = 2;
+                            enemy.X = 2;
                             _myWorld = new World(grid2);
                         }
                     }
@@ -172,12 +181,74 @@ namespace GameTest
                     if (_myWorld.IsWalkable(player.X + 1, player.Y)) player.X += 1;
                     if (_myWorld.IsEnd(player.X, player.Y))
                     {
+                        enemy.Y = 2;
+                        enemy.X = 2;
                         _myWorld = new World(grid2);
                     }
                     break;
             }
+        }
+        public void EnemyMovement()
+        {
+            int oldRandomNumber = 0;
+            while (true)
+            {
+                Random rng = new Random();
+                Thread.Sleep(500);
+                int randomNumber = rng.Next(1, 5);
 
+                if (randomNumber != oldRandomNumber)
+                {
+                    switch (randomNumber)
+                    {
+                        case 1:
+                            if (_myWorld.IsWalkable(enemy.X, enemy.Y - 1))
+                            {
+                                enemy.Y -= 1;
+                                Frame();
+                                oldRandomNumber = randomNumber;
+                            }
+                            break;
 
+                        case 2:
+                            if (_myWorld.IsWalkable(enemy.X - 1, enemy.Y))
+                            {
+                                enemy.X -= 1;
+                                Frame();
+                                oldRandomNumber = randomNumber;
+                            }
+                            break;
+
+                        case 3:
+                            if (_myWorld.IsWalkable(enemy.X, enemy.Y + 1))
+                            {
+                                enemy.Y += 1;
+                                Frame();
+                                oldRandomNumber = randomNumber;
+                            }
+                            break;
+
+                        case 4:
+                            if (_myWorld.IsWalkable(enemy.X + 1, enemy.Y))
+                            {
+                                enemy.X += 1;
+                                Frame();
+                                oldRandomNumber = randomNumber;
+                            }
+                            break;
+                        case 5:
+                            if (_myWorld.IsWalkable(enemy.X + 1, enemy.Y))
+                            {
+                                enemy.X += 1;
+                                Frame();
+                                oldRandomNumber = randomNumber;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
         public class Program
@@ -187,10 +258,10 @@ namespace GameTest
                 Game game = new Game();
 
                 //Assignemnt
-                //game.Run();
+                game.Run();
 
                 //2D
-                game.Start();
+                //game.Start();
             }
         }
     }

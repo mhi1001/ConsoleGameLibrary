@@ -108,6 +108,7 @@ namespace ConsoleGameLibrary
 
         public void Draw()
         {
+            Console.SetCursorPosition(0, 0);
             Console.ForegroundColor = ConsoleColor.Red;
             Console.SetCursorPosition(X, Y);
             Console.Write(Marker);
