@@ -22,7 +22,7 @@ namespace ConsoleGameLibrary.Classes.StrategyPattern
         {
             Trace.ts.TraceInformation("Attacking.....");
             int rawDamage = player.AttackSlots.Where(w => w.IsEquipped).Sum(w => w.Damage);
-            rawDamage = rawDamage * (100 - 35) / 100;
+            rawDamage = rawDamage - 15;
             enemy.ReceiveHit(rawDamage);
         }
     }

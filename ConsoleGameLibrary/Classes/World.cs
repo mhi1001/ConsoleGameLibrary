@@ -41,5 +41,11 @@ namespace ConsoleGameLibrary
 
             return Grid[y, x] == " " || Grid[y, x] == "X";
         }
+
+        public bool IsEnd(int x, int y)
+        {
+            if (Grid[y, x] == "X") return true;
+            return false;
+        }
     }
 }
